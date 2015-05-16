@@ -21,8 +21,8 @@ hasSerialPortParameter = ( sys.argv.__len__() > 1 )
 fallbackSize = ( 90, 20 )
 
 if hasSerialPortParameter:
-    serialPort = sys.argv[ 1 ]
-    print "INITIALIZING WITH USB-PORT: "+serialPort
+    serialport = sys.argv[ 1 ]
+    print "INITIALIZING WITH USB-PORT: "+serialport
     ledDisplay = led.dsclient.DisplayServerClientDisplay(serialport, 8123)
 else:
     print "INITIALIZING WITH SIMULATOR ONLY."
