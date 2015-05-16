@@ -2,7 +2,7 @@ import pygame, led, sys, os, random, csv
 from pygame.locals import *
 from bmpfont import bmpfont
 
-""" A very simple arcade shooter demo :)
+""" A flappy bird clone
 """
 
 random.seed()
