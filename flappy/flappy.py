@@ -12,7 +12,7 @@ WHITE = pygame.Color(255, 255, 255)
 RED = pygame.Color(255, 0, 0)
 GREEN = pygame.Color(0, 255, 0)
 
-wing1font = bmpfont.BmpFont("bmpfont/wing2-3x3px-white.idx")
+wing1font = bmpfont.BmpFont("bmpfont/wing1-5x5px-white.idx")
 
 # detect if a serial/USB port is given as argument
 hasSerialPortParameter = ( sys.argv.__len__() > 1 )
@@ -65,20 +65,21 @@ class Ground(pygame.sprite.Sprite):
         self.rect.y = 20
 
 class Pipe(pygame.sprite.Sprite):
-    def __init__(self, top=False):
+    def __init__(self, top=False, speed=1):
         super(Pipe, self).__init__()
         self.image = pygame.image.load("Sprites/pipe.png").convert_alpha()
         if top:
             self.image = pygame.transform.flip(self.image,False,True)
         self.rect = self.image.get_rect()
         self.passed = False
+        self.speed = speed
 
     def setPos(self, x, y):
         self.rect.centerx = x
         self.rect.centery = y
 
     def update(self):
-        self.rect.centerx -= 1
+        self.rect.centerx -= self.speed
         if self.rect.centerx < -9:
             self.passed = True
         else:
@@ -95,32 +96,37 @@ ground = Ground()
 # pipetop1 = Pipe(True)
 # pipes = [pipebottom1, pipetop1]
 pipes = []
-level = 1
+baselevel = 1
+level = baselevel
+stage = 1
 LevelDesc = []
-LevelDesc.append([(99, 25), (99, -6)])
-LevelDesc.append([(99, 25), (99, -6), (140, 23), (140, -8)])
+LevelDesc.append([(98, 25), (98, -6)])
+LevelDesc.append([(98, 25), (98, -6), (138, 23), (138, -8)])
+LevelDesc.append([(98, 23), (98, -8), (128, 25), (128, -6), (158, 27), (158, -4)])
+LevelDesc.append([(98, 24), (98, -7), (118, 25), (118, -6), (138, 24), (138, -7), (158, 23), (158, -8)])
 
 def resetGame():
     global pipes
     global level
     flappy.setPos(10,10)
-    level = 1
+    level = baselevel
     pipes = []
     # for pipe in pipes:
     #     del pipe
 
-    addPipes()
+    for i in range(baselevel):
+        addPipes()
     # pipes[0].setPos(45,25)
     # pipes[1].setPos(45,-6)
 
 def LevelPassed(lvl):
     global pipes
-    print lvl
+    # print lvl
     passedPipes = 0
     for pipe in pipes:
         if pipe.isPassed():
             passedPipes += 1
-            print passedPipes
+            # print passedPipes
             if (passedPipes / 2) >= lvl:
                 return True
     return False
@@ -131,8 +137,8 @@ def addPipes():
 
     print pipes
 
-    pipes.append(Pipe(False))
-    pipes.append(Pipe(True))
+    pipes.append(Pipe(False,stage))
+    pipes.append(Pipe(True,stage))
 
     # if level == 2:
     i = 0
@@ -148,6 +154,7 @@ def main():
     global gamestate
     global pipes
     global level
+    global stage
 
     scored = False
 
@@ -205,14 +212,26 @@ def main():
             flappygroup.update()
             flappygroup.draw(screen)
 
-            wing1font.blit("Flappy",screen)
+            text = ""
+            text += "Stage "
+            text += str(stage)
+            text += " Level "
+            text += str(level)
+            wing1font.blit(text,screen)
 
-            # if pygame.sprite.spritecollideany(flappy, pipegroup) == None and pygame.sprite.spritecollideany(flappy, groundgroup) == None :
-            if pygame.sprite.spritecollideany(flappy, groundgroup) == None :
-                print pipes
+            if pygame.sprite.spritecollideany(flappy, pipegroup) == None and pygame.sprite.spritecollideany(flappy, groundgroup) == None :
+            # if pygame.sprite.spritecollideany(flappy, groundgroup) == None :
+                # print pipes
                 if LevelPassed(level):
                     wing1font.blit("Level passed",screen, (30,0))
                     level += 1
+                    if level > len(LevelDesc):
+                        stage += 1
+                        pipegroup.empty()
+                        resetGame()
+                        for pipe in pipes:
+                            pipegroup.add(pipe)
+                        continue
                     addPipes()
                     for pipe in pipes:
                         pipegroup.add(pipe)
