@@ -65,12 +65,13 @@ class Ground(pygame.sprite.Sprite):
         self.rect.y = 20
 
 class Pipe(pygame.sprite.Sprite):
-    def __init__(self, top):
+    def __init__(self, top=False):
         super(Pipe, self).__init__()
         self.image = pygame.image.load("Sprites/pipe.png").convert_alpha()
         if top:
             self.image = pygame.transform.flip(self.image,False,True)
         self.rect = self.image.get_rect()
+        self.passed = False
 
     def setPos(self, x, y):
         self.rect.centerx = x
@@ -79,24 +80,74 @@ class Pipe(pygame.sprite.Sprite):
     def update(self):
         self.rect.centerx -= 1
         if self.rect.centerx < -9:
-            self.rect.centerx = 99
+            self.passed = True
+        else:
+            self.passed = False
+        #     self.rect.centerx = 99
+
+    def isPassed(self):
+        return self.passed
 
 flappy = Flappy()
 background = Background()
 ground = Ground()
-pipebottom1 = Pipe(False)
-pipetop1 = Pipe(True)
+# pipebottom1 = Pipe(False)
+# pipetop1 = Pipe(True)
+# pipes = [pipebottom1, pipetop1]
+pipes = []
+level = 1
+LevelDesc = []
+LevelDesc.append([(99, 25), (99, -6)])
+LevelDesc.append([(99, 25), (99, -6), (140, 23), (140, -8)])
 
 def resetGame():
+    global pipes
+    global level
     flappy.setPos(10,10)
-    pipebottom1.setPos(45,25)
-    pipetop1.setPos(45,-6)
+    level = 1
+    pipes = []
+    # for pipe in pipes:
+    #     del pipe
+
+    addPipes()
+    # pipes[0].setPos(45,25)
+    # pipes[1].setPos(45,-6)
+
+def LevelPassed(lvl):
+    global pipes
+    print lvl
+    passedPipes = 0
+    for pipe in pipes:
+        if pipe.isPassed():
+            passedPipes += 1
+            print passedPipes
+            if (passedPipes / 2) >= lvl:
+                return True
+    return False
+
+def addPipes():
+    global pipes
+    global level
+
+    print pipes
+
+    pipes.append(Pipe(False))
+    pipes.append(Pipe(True))
+
+    # if level == 2:
+    i = 0
+    for pipe in pipes:
+        # print level
+        pipe.setPos(LevelDesc[level-1][i][0],LevelDesc[level-1][i][1])
+        i += 1
 
 def main():
     pygame.init()
     clock = pygame.time.Clock()
     
     global gamestate
+    global pipes
+    global level
 
     scored = False
 
@@ -107,8 +158,8 @@ def main():
     groundgroup = pygame.sprite.Group()
     pipegroup = pygame.sprite.Group()
 
-    pipegroup.add(pipetop1)
-    pipegroup.add(pipebottom1)
+    for pipe in pipes:
+        pipegroup.add(pipe)
 
     flappygroup.add(flappy)
     # flappygroup.add(pipegroup.sprites())
@@ -156,10 +207,21 @@ def main():
 
             wing1font.blit("Flappy",screen)
 
-            if pygame.sprite.spritecollideany(flappy, pipegroup) == None and pygame.sprite.spritecollideany(flappy, groundgroup) == None :
-                pass
+            # if pygame.sprite.spritecollideany(flappy, pipegroup) == None and pygame.sprite.spritecollideany(flappy, groundgroup) == None :
+            if pygame.sprite.spritecollideany(flappy, groundgroup) == None :
+                print pipes
+                if LevelPassed(level):
+                    wing1font.blit("Level passed",screen, (30,0))
+                    level += 1
+                    addPipes()
+                    for pipe in pipes:
+                        pipegroup.add(pipe)
+                    
             else:
+                pipegroup.empty()
                 resetGame()
+                for pipe in pipes:
+                    pipegroup.add(pipe)
                 gamestate = 0
         else:
             pass
