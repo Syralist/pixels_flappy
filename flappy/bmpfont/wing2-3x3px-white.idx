@@ -1,0 +1,31 @@
+bmpfile     bmpfont/wing2-3x3px-white.bmp
+width       4
+height      3
+transrgb    0 0 0
+alluppercase
+A   0   0
+B   1   0
+C   2   0
+D   3   0
+E   4   0
+F   5   0
+G   6   0
+H   7   0
+I   8   0
+J   9   0
+K   10   0
+L   11   0
+M   12   0
+N   13   0
+O   14   0
+P   15   0
+Q   16   0
+R   17   0
+S   18   0
+T   19   0
+U   20   0
+V   21   0
+W   22   0
+X   23   0
+Y   24   0
+Z   25   0

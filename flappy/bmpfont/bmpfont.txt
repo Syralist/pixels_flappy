@@ -1,0 +1,11 @@
+Author:  Paul Sidorsky  (paulsid@home.com)
+Description:  A simple class for bitmapped fonts in pygame.
+              A bitmapped font is simply a font specified as a bitmap.
+              Bitmapped fonts are easy to use, fast, and let you display fancy
+              multicoloured text.  The characters are all the same size, so
+              it's easy to treat the screen as a matrix of character cells, as
+              if you were in text mode (e.g. for a status screen between
+              levels).  Drawbacks are that you must of course draw the font
+              yourself, you can't change the colour, and you don't get special
+              effects like bold, italics, etc.
+Requirements: Python 2.1, pygame 1.0
