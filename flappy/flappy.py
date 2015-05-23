@@ -201,7 +201,11 @@ def main():
                 elif event.button == RIGHT:
                     pass
                 elif event.button == B1:
-                    pass
+                    if gamestate == 0:
+                        gamestate = 1
+                        scored = False
+                    else:
+                        flappy.flap()
                 elif event.button == P1:
                     pygame.quit()
                     sys.exit()
