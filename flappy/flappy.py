@@ -1,6 +1,7 @@
 import pygame, led, sys, os, random, csv
 from pygame.locals import *
 from bmpfont import bmpfont
+from led.PixelEventHandler import *
 
 """ A flappy bird clone
 """
@@ -149,6 +150,11 @@ def addPipes():
 
 def main():
     pygame.init()
+    pygame.joystick.init()
+    # Initialize first joystick
+    if pygame.joystick.get_count() > 0:
+        stick = pygame.joystick.Joystick(0)
+        stick.init()
     clock = pygame.time.Clock()
     
     global gamestate
@@ -175,33 +181,30 @@ def main():
     groundgroup.add(ground)
 
     while True:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+        for pgevent in pygame.event.get():
+            event = process_event(pgevent)
+            # if event.type == QUIT:
+            #     pygame.quit()
+            #     sys.exit()
 
-            elif event.type == KEYDOWN:
-                if event.key == K_UP:
-                    pass
-                elif event.key == K_DOWN:
-                    pass
-                elif event.key == K_LEFT:
-                    pass
-                elif event.key == K_RIGHT:
-                    pass
-                elif event.key == K_SPACE:
+            if event.type == PUSH:
+                if event.button == UP:
                     if gamestate == 0:
                         gamestate = 1
                         scored = False
                     else:
                         flappy.flap()
-                elif event.key == K_ESCAPE:
+                elif event.button == DOWN:
+                    pass
+                elif event.button == LEFT:
+                    pass
+                elif event.button == RIGHT:
+                    pass
+                elif event.button == B1:
+                    pass
+                elif event.button == P1:
                     pygame.quit()
                     sys.exit()
-
-            elif event.type == KEYUP:
-                if event.key == K_UP or event.key == K_DOWN:
-                    pass
 
         if gamestate == 1:
             screen.fill(BLACK)
